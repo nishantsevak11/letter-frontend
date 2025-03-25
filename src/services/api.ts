@@ -2,7 +2,7 @@
  * API Service for Letter App (CORS Fixed)
  */
 
-const API_BASE_URL = `https://cors-anywhere.herokuapp.com/${import.meta.env.VITE_API_URL}`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://your-render-backend.onrender.com"; // Use your Render backend URL
 
 // Types
 export interface Letter {
@@ -31,6 +31,7 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const config = {
     ...options,
     headers,
+    credentials: "include", // Include cookies for authentication
     mode: "cors", // Enable CORS mode
   };
 
