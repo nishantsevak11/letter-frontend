@@ -1,8 +1,8 @@
 /**
- * API Service for Letter App
+ * API Service for Letter App (CORS Fixed)
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = `https://cors-anywhere.herokuapp.com/${import.meta.env.VITE_API_URL}`;
 
 // Types
 export interface Letter {
@@ -20,6 +20,7 @@ export interface User {
   accessToken: string;
 }
 
+// API request function
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
   const headers = {
@@ -30,20 +31,26 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const config = {
     ...options,
     headers,
+    mode: "cors", // Enable CORS mode
   };
 
-  const response = await fetch(url, config);
-  
-  if (response.status === 401) {
-    throw new Error("Unauthorized");
-  }
+  try {
+    const response = await fetch(url, config);
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: "Unknown error" }));
-    throw new Error(error.error || "API request failed");
-  }
+    if (response.status === 401) {
+      throw new Error("Unauthorized");
+    }
 
-  return response.json();
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: "Unknown error" }));
+      throw new Error(error.error || "API request failed");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error;
+  }
 };
 
 // Auth-related API methods
