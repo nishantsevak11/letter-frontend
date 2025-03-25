@@ -1,10 +1,8 @@
-
 /**
  * API Service for Letter App
- * Handles all backend API communication for the application
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://letter-app-backend.vercel.app";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Types
 export interface Letter {
@@ -32,7 +30,6 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const config = {
     ...options,
     headers,
-    credentials: "include" as RequestCredentials,
   };
 
   const response = await fetch(url, config);
@@ -51,7 +48,6 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
 
 // Auth-related API methods
 export const authAPI = {
-  // Get current authenticated user
   getCurrentUser: async (): Promise<User | null> => {
     try {
       return await apiRequest("/auth/user");
@@ -61,12 +57,10 @@ export const authAPI = {
     }
   },
 
-  // Login redirect URL
   getLoginUrl: (): string => {
     return `${API_BASE_URL}/auth/google`;
   },
 
-  // Logout redirect URL
   getLogoutUrl: (): string => {
     return `${API_BASE_URL}/auth/logout`;
   },
@@ -74,7 +68,6 @@ export const authAPI = {
 
 // Letters-related API methods
 export const lettersAPI = {
-  // Get all letters for the current user
   getAllLetters: async (): Promise<Letter[]> => {
     try {
       return await apiRequest("/letters");
@@ -84,7 +77,6 @@ export const lettersAPI = {
     }
   },
 
-  // Get a single letter by ID
   getLetter: async (id: string): Promise<Letter> => {
     try {
       return await apiRequest(`/letters/${id}`);
@@ -94,7 +86,6 @@ export const lettersAPI = {
     }
   },
 
-  // Save a letter (create or update)
   saveLetter: async (letter: { id?: string; title: string; content: string }): Promise<Letter> => {
     try {
       const response = await apiRequest("/letters/save", {
@@ -108,7 +99,6 @@ export const lettersAPI = {
     }
   },
 
-  // Delete a letter by ID
   deleteLetter: async (id: string): Promise<void> => {
     try {
       await apiRequest(`/letters/${id}`, {
